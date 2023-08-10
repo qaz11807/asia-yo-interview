@@ -81,14 +81,14 @@ jobs:
       - run: echo "${CIRCLE_BRANCH}"
       - run: echo "${ECR_ENDPOINT}"
       - run: echo "${CIRCLE_SHA1}"
-      - run: echo "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
+      - run: echo "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
 
       - deploy:
           name: Push application Docker image
           command: |
             login="$(aws ecr get-login-password)"
             ${login}
-            version = "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
+            version = "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
             docker tag rails-starter "${CIRCLE_BRANCH}"
             docker tag rails-starter "${version}"
             docker push "${version}"
