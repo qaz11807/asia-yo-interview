@@ -43,10 +43,10 @@ jobs:
       # Run rspec in parallel
       - ruby/rspec-test
 
-  build:
+  build:    
+    executor: aws-cli/default
     docker:
       - image: docker:18.06.3-ce-git
-    executor: aws-cli/default
     steps:
       - checkout
       - setup_remote_docker
@@ -74,9 +74,9 @@ jobs:
           paths:
             - /caches/rails-starter.tar
       - aws-cli/setup:
-          aws-access-key-id: ${AWS_ACCESS_KEY}
-          aws-secret-access-key: ${AWS_SECRET_KEY}
-          aws-region: ${AWS_REGION}
+          aws_access_key_id: ${AWS_ACCESS_KEY}
+          aws_secret_access_key: ${AWS_SECRET_KEY}
+          region: ${AWS_REGION}
       - deploy:
           name: Push application Docker image
           command: |
