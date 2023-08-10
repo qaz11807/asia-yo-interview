@@ -47,12 +47,6 @@ jobs:
     executor: aws-cli/default
     docker:
       - image: docker:18.06.3-ce-git
-    filters:
-      branches:
-        only:
-          - master
-          - preparing
-          - circleci-project-setup
     steps:
       - checkout
       - setup_remote_docker
@@ -101,5 +95,11 @@ workflows:
     jobs:
       - test
       - build:
+          filters:
+            branches:
+              only:           
+                - master
+                - preparing
+                - circleci-project-setup
           requires:
             - test
