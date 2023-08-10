@@ -47,6 +47,12 @@ jobs:
     executor: aws-cli/default
     docker:
       - image: docker:18.06.3-ce-git
+    filters:
+      branches:
+        only:
+          - master
+          - preparing
+          - circleci-project-setup
     steps:
       - checkout
       - setup_remote_docker
@@ -80,12 +86,11 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            if [ "${CIRCLE_BRANCH}" == "circleci-project-setup" ]; then
-              login="$(aws ecr get-login-password)"
-              ${login}
-              docker tag app "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
-              docker push "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
-            fi
+            login="$(aws ecr get-login-password)"
+            ${login}
+            docker tag rails-starter "${ECR_BRANCH}"
+            docker tag rails-starter "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
