@@ -72,6 +72,6 @@ workflows:
               only:           
                 - master
                 - preparing
-                - circleci-project-setup
+
           requires:
             - test
