@@ -81,7 +81,7 @@ jobs:
           name: Push application Docker image
           command: |
             if [ "${CIRCLE_BRANCH}" == "circleci-project-setup" ]; then
-              login="$(aws ecr get-login)"
+              login="$(aws ecr get-login-password)"
               ${login}
               docker tag app "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
               docker push "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
