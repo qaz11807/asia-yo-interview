@@ -47,6 +47,9 @@ group :development, :test do
   gem "rspec"
   gem "rspec-rails"
 
+  # For CircleCi
+  gem 'rspec_junit_formatter'
+
   # pry debug tool
   gem "pry"
   gem "pry-rails"
