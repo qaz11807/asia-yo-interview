@@ -5,6 +5,7 @@ version: 2.1
 orbs:
   ruby: circleci/ruby@2.1.0
   aws-cli: circleci/aws-cli@4.0.0
+  aws-ecr: circleci/aws-ecr@9.0
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -88,22 +89,36 @@ jobs:
           command: |
             login="$(aws ecr get-login-password)"
             ${login}
-            version = "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
             docker tag rails-starter "${CIRCLE_BRANCH}"
-            docker tag rails-starter "${version}"
-            docker push "${version}"
+            docker tag rails-starter "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   deploy-workflow:
     jobs:
       - test
-      - build:
-          filters:
-            branches:
-              only:           
-                - master
-                - preparing
-                - circleci-project-setup
-          requires:
-            - test
+      # - build:
+      #     filters:
+      #       branches:
+      #         only:           
+      #           - master
+      #           - preparing
+      #           - circleci-project-setup
+      #     requires:
+      #       - test
+      - aws-ecr/build_and_push_image:
+          auth:
+            - aws-cli/setup:
+                aws_access_key_id: AWS_ACCESS_KEY
+                aws_secret_access_key: AWS_SECRET_KEY
+                region: AWS_REGION
+          region: AWS_REGION
+          create_repo: true
+          no_output_timeout: 20m
+          public_registry: false
+          push_image: true
+          repo: rails-starter
+          repo_scan_on_push: true
+          skip_when_tags_exist: false
+          tag: "${CIRCLE_BRANCH}"
