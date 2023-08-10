@@ -184,6 +184,8 @@ GEM
       rspec-mocks (~> 3.12)
       rspec-support (~> 3.12)
     rspec-support (3.12.1)
+    rspec_junit_formatter (0.6.0)
+      rspec-core (>= 2, < 4, != 2.12.0)
     thor (1.2.2)
     timeout (0.4.0)
     tzinfo (2.0.6)
@@ -210,6 +212,7 @@ DEPENDENCIES
   rails (~> 7.0.6)
   rspec
   rspec-rails
+  rspec_junit_formatter
   tzinfo-data
 
 RUBY VERSION
