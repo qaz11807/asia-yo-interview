@@ -108,6 +108,7 @@ workflows:
       #     requires:
       #       - test
       - aws-ecr/build_and_push_image:
+          account_id: ${AWS_ACCOUNT_ID}
           auth:
             - aws-cli/setup:
                 aws_access_key_id: AWS_ACCESS_KEY
@@ -121,4 +122,13 @@ workflows:
           repo: rails-starter
           repo_scan_on_push: true
           skip_when_tags_exist: false
-          tag: "${CIRCLE_BRANCH}"
+          tag: ${CIRCLE_BRANCH}
+
+          filters:
+            branches:
+              only:           
+                - master
+                - preparing
+                - circleci-project-setup
+          requires:
+            - test
