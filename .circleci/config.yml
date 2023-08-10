@@ -11,6 +11,7 @@ jobs:
   test:
     parallelism: 3
     docker:
+      - image: cimg/ruby:3.0.4
       - image: cimg/postgres:15.3
         environment:
           POSTGRES_USER: postgres
