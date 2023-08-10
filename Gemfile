@@ -39,6 +39,24 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+
+  # RSpec meta-gem that depends on the other components
+  gem "rspec"
+  gem "rspec-rails"
+
+  # pry debug tool
+  gem "pry"
+  gem "pry-rails"
+  gem "pry-byebug", "~> 3.9.0"
+
+  # for test create fake data
+  gem "factory_bot_rails"
+
+  # for test clear database data
+  gem "database_cleaner", "~> 1.5"
 end
 
 group :development do
