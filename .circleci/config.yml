@@ -88,6 +88,9 @@ jobs:
           command: |
             login="$(aws ecr get-login-password)"
             ${login}
+            echo "${ECR_BRANCH}"
+            echo "${ECR_ENDPOINT}"
+            echo "${CIRCLE_SHA1}"
             docker tag rails-starter "${ECR_BRANCH}"
             docker tag rails-starter "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
