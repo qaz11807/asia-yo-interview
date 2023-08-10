@@ -11,7 +11,7 @@ jobs:
   test:
     parallelism: 3
     docker:
-      - image: circleci/postgres:15.3
+      - image: cimg/postgres:15.3
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: rails_starter_test
