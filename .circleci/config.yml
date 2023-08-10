@@ -4,13 +4,12 @@ version: 2.1
 
 orbs:
   ruby: circleci/ruby@2.1.0
-
+  aws-cli: circleci/aws-cli@4.0.0
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   test:
     parallelism: 3
-
     docker:
       - image: cimg/ruby:3.0.4
       - image: cimg/postgres:15.3
@@ -18,39 +17,75 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: rails_starter_test
           POSTGRES_PASSWORD: root
-    
     environment:
       BUNDLE_JOBS: "3"
       BUNDLE_RETRY: "3"
       RAILS_ENV: test
       BUNDLE_PATH: vendor/bundle
-
     steps:
       - checkout
-
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "Gemfile.lock" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
       - ruby/install-deps
-
       - save_cache:
           paths:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-
       - run:
           name: Database setup
           command: bundle exec rails db:migrate --trace
       # Run rspec in parallel
       - ruby/rspec-test
 
+  build:
+    docker:
+      - image: docker:18.06.3-ce-git
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/rails-starter.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/rails-starter.tar | true
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build --cache-from=rails-starter -t rails-starter .
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/rails-starter.tar rails-starter
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/rails-starter.tar
+      - aws-cli/setup:
+          aws-access-key-id: ${AWS_ACCESS_KEY}
+          aws-secret-access-key: ${AWS_SECRET_KEY}
+          aws-region: ${AWS_REGION}
+      - deploy:
+          name: Push application Docker image
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "circleci-project-setup" ]; then
+              login="$(aws ecr get-login)"
+              ${login}
+              docker tag app "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
+              docker push "${ECR_ENDPOINT}/rails-starter:${CIRCLE_SHA1}"
+            fi
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
