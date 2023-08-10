@@ -92,3 +92,4 @@ workflows:
   deploy-workflow:
     jobs:
       - test
+      - build
