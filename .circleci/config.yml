@@ -2,11 +2,16 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
+executors:
+  python:
+    docker:
+      - image: python:3.9.0-alpine
+
 orbs:
   ruby: circleci/ruby@2.1.0
   aws-cli: circleci/aws-cli@4.0.0
   aws-ecr: circleci/aws-ecr@9.0
-  ansible-playbook: orbss/ansible-playbook@0.0.5
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -45,6 +50,24 @@ jobs:
       # Run rspec in parallel
       - ruby/rspec-test
 
+  deploy:
+    executor: python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Deploy to cluster
+          command: |
+            cd .circleci/.ansible
+            echo $VAULT_PASS > secret.txt
+            ansible-playbook deploy.yml
+
 # Orchestrate jobs using workflows
 # See: https://circlevscode-file://vscode-app/c:/Users/CHANG-CHENG-CHIH/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.htmlci.com/docs/configuration-reference/#workflows
 workflows:
@@ -77,6 +100,4 @@ workflows:
 
           requires:
             - test
-      - ansible-playbook:
-          playbook: './.ansible/deploy.yml'
-          private-key: AWS_PRIVATE_KEY
+      - deploy
