@@ -7,6 +7,7 @@
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
+    - depoly_directory: "{{ playbook_dir }}/../../deploy"
   environment:
     - DATABASE_URL: "{{ database_url }}"
     - SECRET_KEY_BASE: "{{ secret_key_base }}"

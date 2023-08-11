@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    image: rails-starter
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    networks:
+      - rails-starter
+
+  nginx:
+    image: nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - rails-starter
+    depends_on:
+      - app
+    
+networks:
+  rails-starter:
+    external: true
