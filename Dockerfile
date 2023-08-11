@@ -32,6 +32,13 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Fix Fly.io Permission bug
+RUN chmod +x ./bin/docker-entrypoint && \
+    sed -i "s/\r$//g" ./bin/docker-entrypoint
+
+RUN chmod +x ./bin/rails && \
+    sed -i "s/\r$//g" ./bin/rails
+
 # Final stage for app image
 FROM base
 
