@@ -1,0 +1,2 @@
+[webservers]
+44.201.217.170 ansible_user=ec2-user

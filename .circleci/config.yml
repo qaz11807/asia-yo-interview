@@ -6,6 +6,7 @@ orbs:
   ruby: circleci/ruby@2.1.0
   aws-cli: circleci/aws-cli@4.0.0
   aws-ecr: circleci/aws-ecr@9.0
+  ansible-playbook: orbss/ansible-playbook@0.0.5
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -44,69 +45,12 @@ jobs:
       # Run rspec in parallel
       - ruby/rspec-test
 
-  build:    
-    executor: aws-cli/default
-    docker:
-      - image: docker:18.06.3-ce-git
-    steps:
-      - checkout
-      - setup_remote_docker
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/rails-starter.tar
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/rails-starter.tar | true
-      - run:
-          name: Build application Docker image
-          command: |
-            docker build --cache-from=rails-starter -t rails-starter .
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/rails-starter.tar rails-starter
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/rails-starter.tar
-      - aws-cli/setup:
-          aws_access_key_id: AWS_ACCESS_KEY
-          aws_secret_access_key: AWS_SECRET_KEY
-          region: AWS_REGION
-
-      - run: echo "${CIRCLE_BRANCH}"
-      - run: echo "${ECR_ENDPOINT}"
-      - run: echo "${CIRCLE_SHA1}"
-      - run: echo "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
-
-      - deploy:
-          name: Push application Docker image
-          command: |
-            login="$(aws ecr get-login-password)"
-            ${login}
-            docker tag rails-starter "${CIRCLE_BRANCH}"
-            docker tag rails-starter "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT}:${CIRCLE_SHA1}"
 # Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
+# See: https://circlevscode-file://vscode-app/c:/Users/CHANG-CHENG-CHIH/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.htmlci.com/docs/configuration-reference/#workflows
 workflows:
   deploy-workflow:
     jobs:
       - test
-      # - build:
-      #     filters:
-      #       branches:
-      #         only:           
-      #           - master
-      #           - preparing
-      #           - circleci-project-setup
-      #     requires:
-      #       - test
       - aws-ecr/build_and_push_image:
           account_id: ${AWS_ACCOUNT_ID}
           auth:
@@ -122,13 +66,16 @@ workflows:
           repo: rails-starter
           repo_scan_on_push: true
           skip_when_tags_exist: false
-          tag: ${CIRCLE_BRANCH}
+          tag: latest
 
           filters:
             branches:
               only:           
                 - master
                 - preparing
-                - circleci-project-setup
+
           requires:
             - test
+      - ansible-playbook:
+          playbook: './.ansible/deploy.yml'
+          private-key: AWS_PRIVATE_KEY
