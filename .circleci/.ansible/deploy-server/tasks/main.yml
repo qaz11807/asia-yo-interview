@@ -1,13 +1,3 @@
-- name: show debug meesage
-  debug: 
-    msg: 
-      - "{{ app }}"
-      - "{{ ecr_endpoint }}"
-      - "{{ work_directory }}"
-      - "{{ docker_compose_yml_path }}"
-      - "{{ database_url }}"
-      - "{{ secret_key_base }}"
-
 - name: Copy docker-compose.yml to remote
   copy:
     src: "{{ playbook_dir }}/../../docker-compose.yml"
