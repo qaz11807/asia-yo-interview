@@ -1,8 +1,0 @@
-app: rails-starter
-ecr_endpoint: "334897674349.dkr.ecr.us-east-1.amazonaws.com/{{ app }}"
-
-docker_compose_yml_path: "{{ playbook_dir }}/../../docker-compose.yml"
-work_directory: "~/{{app}}"
-
-database_url: mock
-secret_key_base: 22f8125a49c695c6c482c46c006bb6ee

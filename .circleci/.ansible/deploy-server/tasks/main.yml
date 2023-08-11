@@ -1,12 +1,12 @@
 - name: show debug meesage
-  vars: 
-    msg: |
-      Environment Variables ("environment"):
-      --------------------------------
-      {{ environment | to_nice_json }} 
   debug: 
-    msg: "{{ msg.split('\n') }}"
-  tags: debug_info
+    msg: 
+      - "{{ app }}"
+      - "{{ ecr_endpoint }}"
+      - "{{ work_directory }}"
+      - "{{ docker_compose_yml_path }}"
+      - "{{ database_url }}"
+      - "{{ secret_key_base }}"
 
 - name: Copy docker-compose.yml to remote
   copy:
