@@ -2,12 +2,12 @@ version: '3'
 
 services:
   app:
-    image: rails-starter
+    image: asia-yo
     environment:
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
     networks:
-      - rails-starter
+      - asia-yo
 
   nginx:
     image: nginx
@@ -16,10 +16,10 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
-      - rails-starter
+      - asia-yo
     depends_on:
       - app
     
 networks:
-  rails-starter:
+  asia-yo:
     external: true

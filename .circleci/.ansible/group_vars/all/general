@@ -1,4 +1,4 @@
-app: rails-starter
+app: asia-yo
 ecr_endpoint: "334897674349.dkr.ecr.us-east-1.amazonaws.com/{{ app }}"
 
 work_directory: "~/{{app}}"

@@ -22,7 +22,7 @@ jobs:
       - image: cimg/postgres:15.3
         environment:
           POSTGRES_USER: postgres
-          POSTGRES_DB: rails_starter_test
+          POSTGRES_DB: asia_yo_test
           POSTGRES_PASSWORD: root
     environment:
       BUNDLE_JOBS: "3"
@@ -86,7 +86,7 @@ workflows:
           no_output_timeout: 20m
           public_registry: false
           push_image: true
-          repo: rails-starter
+          repo: asia-yo
           repo_scan_on_push: true
           skip_when_tags_exist: false
           tag: latest
