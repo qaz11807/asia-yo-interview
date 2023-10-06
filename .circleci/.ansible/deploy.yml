@@ -10,6 +10,7 @@
     - depoly_directory: "{{ playbook_dir }}/../../deploy"
   environment:
     - DATABASE_URL: "{{ database_url }}"
+    - REDIS_URL: "{{ redis_url }}"
     - SECRET_KEY_BASE: "{{ secret_key_base }}"
   roles:
     - deploy-server

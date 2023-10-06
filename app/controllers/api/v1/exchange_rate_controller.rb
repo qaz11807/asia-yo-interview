@@ -2,14 +2,23 @@ class Api::V1::ExchangeRateController < ApplicationController
   include ActionView::Helpers::NumberHelper
 
   def index
-    source = Currency.find_by(name: params['source'].upcase)
-    target = Currency.find_by(name: params['target'].upcase)
-    return error_response(404, message: 'Currency not supproted!') if source.nil? || target.nil?
+    key = "#{params['source']}:#{params['target']}"
+    cached = Rails.cache.read(key)
+    rate = if cached
+             cached
+           else
+             source = Currency.find_by(name: params['source'].upcase)
+             target = Currency.find_by(name: params['target'].upcase)
+             return error_response(404, message: 'Currency not supproted!') if source.nil? || target.nil?
 
-    exchange_rate = ExchangeRate.find_by(source_id: source.id, target_id: target.id)
-    return error_response(404, message: 'Exchange rate not supproted!') if exchange_rate.nil?
+             exchange_rate = ExchangeRate.find_by(source_id: source.id, target_id: target.id)
+             return error_response(404, message: 'Exchange rate not supproted!') if exchange_rate.nil?
 
-    exchanged_amount = (exchange_rate.rate * currency_to_number(params['amount'])).round(2)
+             Rails.cache.write(key, exchange_rate.rate)
+             exchange_rate.rate
+           end
+
+    exchanged_amount = (rate * currency_to_number(params['amount'])).round(2)
 
     success_response({ amount: number_to_currency(exchanged_amount) })
   end
