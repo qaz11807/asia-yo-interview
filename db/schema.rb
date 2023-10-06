@@ -10,8 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 0) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+ActiveRecord::Schema[7.0].define(version: 2023_10_05_153301) do
+  create_table "currencies", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
+  create_table "exchange_rates", force: :cascade do |t|
+    t.integer "source_id"
+    t.integer "target_id"
+    t.float "rate"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_id"], name: "index_exchange_rates_on_source_id"
+    t.index ["target_id"], name: "index_exchange_rates_on_target_id"
+  end
+
+  add_foreign_key "exchange_rates", "currencies", column: "source_id"
+  add_foreign_key "exchange_rates", "currencies", column: "target_id"
 end

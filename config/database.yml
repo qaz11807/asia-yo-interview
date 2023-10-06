@@ -14,12 +14,25 @@ development:
   <<: *default
   database: asia_yo_development
 
+# development:
+#   adapter: sqlite3
+#   pool: 5
+#   timeout: 5000
+#   database: asia_yo_development
+
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
+
 test:
   <<: *default
   database: asia_yo_test
+
+# test:
+#   adapter: sqlite3
+#   pool: 5
+#   timeout: 5000
+#   database: asia_yo_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -44,5 +57,6 @@ test:
 production:
   adapter: postgresql
   encoding: unicode
+  database: asia_yo_production
   url: <%= ENV["DATABASE_URL"] %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 25 } %>

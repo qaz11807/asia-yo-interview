@@ -60,6 +60,8 @@ group :development, :test do
 
   # for test clear database data
   gem "database_cleaner", "~> 1.5"
+
+  gem "sqlite3"
 end
 
 group :development do

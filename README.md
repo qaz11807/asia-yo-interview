@@ -1,24 +1,19 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+1. run `bundle install` to install the essential gems
 
-Things you may want to cover:
+2. Update `config/database.yml` 
 
-* Ruby version
+3. run `rails db:setup` to initialize the database
 
-* System dependencies
+4. run `rails db:seed` to initialize the data
 
-* Configuration
+5. run `rails server` to start the server
 
-* Database creation
+## Hosting
 
-* Database initialization
+this project also hosting on AWS EC2, you can test it on [Api Document](#api-document) now!
 
-* How to run the test suite
+## Api Document
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+ref to [postman](https://elements.getpostman.com/redirect?entityId=5948636-f0e96e52-8521-48b4-ad9c-dba8a191a0c9&entityType=collection)
